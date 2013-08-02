@@ -1461,8 +1461,9 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
 -(void) responseJSONWithOptions:(NSJSONReadingOptions) options completionHandler:(void (^)(id jsonObject)) jsonDecompressionHandler {
   
-  if([self responseData] == nil) {
+    NSData * responseData = [self responseData];
     
+  if(!responseData) {
     jsonDecompressionHandler(nil);
     return;
   }
@@ -1470,7 +1471,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
     
     NSError *error = nil;
-    id returnValue = [NSJSONSerialization JSONObjectWithData:[self responseData] options:options error:&error];
+    id returnValue = [NSJSONSerialization JSONObjectWithData:responseData options:options error:&error];
     if(error) {
       
       DLog(@"JSON Parsing Error: %@", error);
