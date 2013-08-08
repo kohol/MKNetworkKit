@@ -1127,7 +1127,14 @@ OSStatus extractIdentityAndTrust(CFDataRef inPKCS12Data,        // 5
     }
     else if (challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust) {
       
-      if(challenge.previousFailureCount < 5) {
+      if(self.shouldContinueWithInvalidCertificate)
+      {
+          // Cert not trusted, but user is OK with that
+          DLog(@"Certificate is not trusted, but self.shouldContinueWithInvalidCertificate is YES");
+          [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+      }
+      else
+          if(challenge.previousFailureCount < 5) {
         
         self.serverTrust = challenge.protectionSpace.serverTrust;
         SecTrustResultType result;
